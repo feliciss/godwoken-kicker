@@ -38,7 +38,7 @@ services:
   godwoken:
     build: 
       context: layer2
-      args: 
+      args:
         DOCKER_IMAGE: "${DOCKER_MANUAL_BUILD_IMAGE_NAME}:${DOCKER_MANUAL_BUILD_IMAGE_TAG}"
     volumes:
     - ../:/code
@@ -46,7 +46,6 @@ services:
     - ../cache/activity/ckb-cli-data:/root/.ckb-cli
     environment:
       FORCE_GODWOKEN_REDEPLOY: ${FORCE_GODWOKEN_REDEPLOY}
-    command: bash /code/docker/layer2/entrypoint.sh
     ports:
       - 8119:8119
     depends_on:
@@ -64,7 +63,6 @@ services:
       - ../cache/activity/polyjuice:/usr/local/polyman
     environment: 
       MANUAL_BUILD_POLYMAN: ${MANUAL_BUILD_POLYMAN}
-    command: bash /code/docker/polyjuice/entrypoint.sh 
     ports:
       - 6101:6101
       - 6100:6100
@@ -82,7 +80,6 @@ services:
       - ../cache/activity/call-polyman:/usr/local/polyman/call-polyman
     environment: 
       MANUAL_BUILD_POLYMAN: ${MANUAL_BUILD_POLYMAN}
-    command: bash /code/docker/call-polyman/entrypoint.sh 
     ports:
       - 6102:6102
     depends_on:
@@ -99,7 +96,6 @@ services:
     environment: 
       MANUAL_BUILD_WEB3: ${MANUAL_BUILD_WEB3}
       PORT: 8024
-    command: bash /code/docker/web3/entrypoint.sh
     ports:
       - 8024:8024
     depends_on: 
@@ -107,8 +103,10 @@ services:
       - godwoken
   
   indexer:
-    image: "${DOCKER_PREBUILD_IMAGE_NAME}:${DOCKER_PREBUILD_IMAGE_TAG}" 
-    command: bash /code/docker/indexer/entrypoint.sh 
+    build:
+      context: indexer
+      args:
+        DOCKER_PREBUILD_IMAGE: "${DOCKER_PREBUILD_IMAGE_NAME}:${DOCKER_PREBUILD_IMAGE_TAG}"
     volumes:
     - ../:/code
     - ../cache/activity/indexer-data:/usr/local/ckb-indexer/data
